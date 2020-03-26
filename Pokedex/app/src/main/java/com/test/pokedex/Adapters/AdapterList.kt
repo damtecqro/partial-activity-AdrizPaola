@@ -1,6 +1,7 @@
 package com.test.pokedex.Adapters
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.koushikdutta.ion.Ion
+import com.test.pokedex.Activities.ActivityInfo
 import com.test.pokedex.R
 
 class AdapterList:RecyclerView.Adapter<AdapterList.ViewHolder>() {
@@ -43,9 +45,21 @@ class AdapterList:RecyclerView.Adapter<AdapterList.ViewHolder>() {
     class ViewHolder(view: View):RecyclerView.ViewHolder(view){
         private var imagePokemon: ImageView = view.findViewById(R.id.pokemon_image)
         private var namePokemon:TextView  = view.findViewById(R.id.pokemon_name)
+        private var vista = view
 
         fun bind(item:JsonObject,context:Context){
           namePokemon.setText(item.get("name").asString)
+
+            vista.tag = position
+
+            imagePokemon.setOnClickListener {
+                val id = vista.tag as Int
+
+                var intent: Intent = Intent(context, ActivityInfo::class.java)
+                intent.putExtra("auxID", (id + 1).toString())
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                context.startActivity(intent)
+            }
 
             Ion.with(context)
                 .load(item.get("url").asString)
